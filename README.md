@@ -1,3 +1,8 @@
-# base-ts-project
+# comms3-livekit-transport
 
-Use this project as template for TypeScript libraries
+Communications v3, livekit transport
+
+
+```
+livekit-cli create-token --create --join --api-key <key> --api-secret <secret> -r <room> --identity <identity> --valid-for 10h
+```

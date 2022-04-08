@@ -1,5 +1,7 @@
 dist
+build
 node_modules
 temp
 tsdoc-metadata.json
 coverage
+.env

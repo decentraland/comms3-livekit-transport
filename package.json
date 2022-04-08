@@ -1,5 +1,5 @@
 {
-  "name": "@well-known-components/base-component",
+  "name": "comms3-livekit-transport",
   "version": "1.0.0",
   "description": "base component",
   "main": "dist/index.js",
@@ -22,12 +22,14 @@
   "homepage": "https://github.com/well-known-components/base-component#readme",
   "devDependencies": {
     "@microsoft/api-extractor": "^7.17.0",
-    "typescript": "^4.3.5",
     "@types/jest": "^27.0.1",
     "jest": "^27.0.6",
-    "ts-jest": "^27.0.5"
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.3.5"
   },
-  "dependencies": {},
+  "dependencies": {
+    "livekit-client": "^0.17.5"
+  },
   "files": [
     "dist"
   ]
