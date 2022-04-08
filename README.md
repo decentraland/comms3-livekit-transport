@@ -1,3 +1,3 @@
-# base-ts-project
+# comms3-livekit-transport
 
-Use this project as template for TypeScript libraries
+Communications v3, livekit transport
