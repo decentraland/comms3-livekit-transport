@@ -10,15 +10,29 @@ import {
 
 
 /**
+ * Logger config
+ * @public
+ */
+export type ILogger = {
+  error(message: string | Error, ...args: any[]): void
+  log(message: string, ...args: any[]): void
+  warn(message: string, ...args: any[]): void
+  info(message: string, ...args: any[]): void
+  trace(message: string, ...args: any[]): void
+}
+
+/**
  * Transport config
  * @public
  */
 export type Config = {
   url: string
   token: string
+  logger?: ILogger
   handleTrackSubscribed?: (track: RemoteTrack) => void
   handleTrackUnsubscribed?: (track: RemoteTrack) => void
   handleDataReceived?: (peerId: string, payload: Uint8Array) => void
+  handleDisconnected?: () => void
 }
 
 /**
@@ -28,26 +42,31 @@ export type Config = {
 export class LivekitTransport {
   room: Room
 
+  private logger: ILogger
+
   constructor(private config: Config) {
+    this.logger = config.logger || console
     this.room = new Room()
     this.room
       .on(RoomEvent.TrackSubscribed, (track: RemoteTrack, _: RemoteTrackPublication, __: RemoteParticipant) => {
-        console.log("track subscribed")
+        this.logger.log("track subscribed")
         if (config.handleTrackSubscribed) {
           config.handleTrackSubscribed(track)
         }
       })
       .on(RoomEvent.TrackUnsubscribed, (track: RemoteTrack, _: RemoteTrackPublication, __: RemoteParticipant) => {
-        console.log("track unsubscribed")
+        this.logger.log("track unsubscribed")
         if (config.handleTrackUnsubscribed) {
           config.handleTrackUnsubscribed(track)
         }
       })
       .on(RoomEvent.Disconnected, () => {
-        console.log('disconnected from room')
+        this.logger.log('disconnected from room')
+        if (config.handleDisconnected) {
+          config.handleDisconnected()
+        }
       })
       .on(RoomEvent.DataReceived, (payload: Uint8Array, participant?: Participant, _?: DataPacket_Kind) => {
-        console.log(`${this.localName()}: data received from ${participant ? participant.name : 'undefined'}, len: ${payload.byteLength}`)
         if (config.handleDataReceived && participant) {
           config.handleDataReceived(participant.identity, payload)
         }
@@ -56,7 +75,11 @@ export class LivekitTransport {
 
   async connect(): Promise<void> {
     await this.room.connect(this.config.url, this.config.token, { autoSubscribe: true });
-    console.log(`${this.localName()} connected to ${this.room.name}`)
+    this.logger.log(`${this.localName()} connected to ${this.room.name}`)
+  }
+
+  async disconnect(): Promise<void> {
+    return this.room.disconnect()
   }
 
   setMicrophoneEnabled(enabled: boolean): Promise<void> {

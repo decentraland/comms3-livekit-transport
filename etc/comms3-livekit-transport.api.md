@@ -11,9 +11,20 @@ import { Room } from 'livekit-client';
 export type Config = {
     url: string;
     token: string;
+    logger?: ILogger;
     handleTrackSubscribed?: (track: RemoteTrack) => void;
     handleTrackUnsubscribed?: (track: RemoteTrack) => void;
     handleDataReceived?: (peerId: string, payload: Uint8Array) => void;
+    handleDisconnected?: () => void;
+};
+
+// @public
+export type ILogger = {
+    error(message: string | Error, ...args: any[]): void;
+    log(message: string, ...args: any[]): void;
+    warn(message: string, ...args: any[]): void;
+    info(message: string, ...args: any[]): void;
+    trace(message: string, ...args: any[]): void;
 };
 
 // @public
@@ -21,6 +32,8 @@ export class LivekitTransport {
     constructor(config: Config);
     // (undocumented)
     connect(): Promise<void>;
+    // (undocumented)
+    disconnect(): Promise<void>;
     // (undocumented)
     localName(): string;
     // (undocumented)
